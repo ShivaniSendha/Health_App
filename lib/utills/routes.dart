@@ -10,7 +10,7 @@ class MyRoute {
   static String UserprofileRoutes = '/userprofile';
   static String BottomTabBarRoutes = '/bottomtabbar';
   static String UploaaddocumentsRoutes = '/uploaddocuments';
-
+  static String BiometricRoutes = '/biometricRoutes';
   static String HealthdocumentsRoutes = '/healthdocuments';
 
 }

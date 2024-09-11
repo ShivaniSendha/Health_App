@@ -1,8 +1,10 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:health_app/Component/Documents/HealthDocuments.dart';
+import 'package:health_app/Screens/Documents/HealthDocuments.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -59,13 +61,22 @@ class _HomeState extends State<Home> {
 
   void _showBottomModal(BuildContext context) {
     showModalBottomSheet(
-      backgroundColor: const Color.fromARGB(255, 160, 96, 233),
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return Container(
-          height: 130,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 100, 235, 194), // Start color
+                Color.fromARGB(255, 150, 94, 247), // End color
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
           child: Column(
-            children: [
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
               ListTile(
                 leading: Icon(Icons.camera),
                 title: Text('Camera'),
@@ -147,25 +158,44 @@ class _HomeState extends State<Home> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text('Welcome')),
-        actions: [
-          CircleAvatar(
-            backgroundImage: _profilePhotoUrl != null
-                ? FileImage(File(_profilePhotoUrl!))
-                : AssetImage('assets/images/default_profile.png')
-                    as ImageProvider,
-            radius: 20,
-            backgroundColor: Colors.white,
-            child: IconButton(
-              icon: Icon(Icons.more_vert),
-              onPressed: () {
-                _showProfileMenu(context);
-              },
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          title: Text("Care"),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 100, 235, 194), // Start color
+                  Color.fromARGB(255, 150, 94, 247), // End color
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
           ),
-          SizedBox(width: 20),
-        ],
+          backgroundColor: Colors
+              .transparent, // Make background transparent to show gradient
+          elevation: 0, // Optional: remove shadow for cleaner look
+
+          actions: [
+            CircleAvatar(
+              backgroundImage: _profilePhotoUrl != null
+                  ? FileImage(File(_profilePhotoUrl!))
+                  : AssetImage('assets/images/default_profile.png')
+                      as ImageProvider,
+              radius: 20,
+              backgroundColor: Colors.white,
+              child: IconButton(
+                icon: Icon(Icons.more_vert),
+                onPressed: () {
+                  _showProfileMenu(context);
+                },
+              ),
+            ),
+            SizedBox(width: 30),
+          ],
+        ),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -220,16 +250,15 @@ class _HomeState extends State<Home> {
                     children: [
                       Icon(
                         Icons.upload_file,
-                        color: Colors.deepPurple,
-                        size: screenWidth * 0.06,
+                        color: const Color.fromARGB(255, 63, 143, 63),
+                        size: screenWidth * 0.10,
                       ),
                       SizedBox(width: screenWidth * 0.03),
                       Text(
                         'Upload Document',
                         style: TextStyle(
                           fontSize: screenWidth * 0.045,
-                          
-                          color: Colors.deepPurple,
+                          color: const Color.fromARGB(255, 63, 143, 63),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -269,15 +298,15 @@ class _HomeState extends State<Home> {
                     children: [
                       Icon(
                         Icons.health_and_safety,
-                        color: Colors.deepPurple,
-                        size: screenWidth * 0.06,
+                        color: const Color.fromARGB(255, 63, 143, 63),
+                        size: screenWidth * 0.10,
                       ),
                       SizedBox(width: screenWidth * 0.03),
                       Text(
                         'Health Document',
                         style: TextStyle(
                           fontSize: screenWidth * 0.045,
-                          color: Colors.deepPurple,
+                          color: const Color.fromARGB(255, 63, 143, 63),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -290,12 +319,17 @@ class _HomeState extends State<Home> {
         ],
       ),
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.deepPurple,
-        color: Colors.deepPurple.shade200,
+        backgroundColor: Colors
+            .transparent, // Make the background transparent to show gradient
+        color: Color.fromARGB(255, 101, 218, 179), // Color of the active item
+        buttonBackgroundColor: Colors.green, // Color of the button
         items: [
           Icon(Icons.home, color: Colors.white),
           Icon(Icons.settings_accessibility, color: Colors.white),
         ],
+        onTap: (index) {
+          // Handle the navigation here
+        },
       ),
     );
   }
@@ -305,10 +339,21 @@ class _HomeState extends State<Home> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color.fromARGB(255, 160, 96, 233),
+          contentPadding: EdgeInsets.zero, // Remove default padding
           content: Container(
-            height: 130,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 100, 235, 194), // Start color
+                  Color.fromARGB(255, 150, 94, 247), // End color
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
                   leading: Icon(Icons.person),
@@ -316,7 +361,10 @@ class _HomeState extends State<Home> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Userprofile()),
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            Userprofile(), // Navigate to the UserProfile page
+                      ),
                     );
                   },
                 ),
@@ -324,7 +372,6 @@ class _HomeState extends State<Home> {
                   leading: Icon(Icons.logout),
                   title: Text('Logout'),
                   onTap: () {
-                    Navigator.pop(context); // Close the dialog
                     _logout();
                   },
                 ),

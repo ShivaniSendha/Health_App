@@ -1,6 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:health_app/Component/CreateAcc.dart';
+
+import 'package:health_app/utills/routes.dart';
 
 class Splashscreen extends StatefulWidget {
   @override
@@ -12,12 +15,9 @@ class _SplashscreenState extends State<Splashscreen> {
   void initState() {
     super.initState();
 
-    // Navigate to HomeScreen after 3 seconds
+    // Navigate to FirstScreen after 3 seconds
     Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => CreateAcc()),
-      );
+      Navigator.pushNamed(context, MyRoute.CreateAccRoute);
     });
   }
 
@@ -29,8 +29,8 @@ class _SplashscreenState extends State<Splashscreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              "assets/images/doc.png",
-              scale: 1,
+              "assets/images/careslogen1.jpg",
+              scale: 2,
             ),
             SizedBox(
               height: 30.0,
@@ -39,17 +39,6 @@ class _SplashscreenState extends State<Splashscreen> {
           ],
         ),
       ),
-    );
-  }
-}
-
-// Dummy HomeScreen for navigation
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Home Screen")),
-      body: Center(child: Text("Welcome to the App!")),
     );
   }
 }

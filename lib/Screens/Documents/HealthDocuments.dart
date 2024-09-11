@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:health_app/Component/Documents/DocumentViewer.dart';
+import 'package:health_app/Screens/Documents/DocumentViewer.dart';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
@@ -23,8 +24,7 @@ class _HealthDocumentsState extends State<HealthDocuments> {
 
   Future<void> _downloadDocument(
       BuildContext context, Map<String, dynamic> document) async {
-    var status =
-        await Permission.storage.request(); 
+    var status = await Permission.storage.request();
 
     if (status.isGranted) {
       Directory? directory;
@@ -153,12 +153,7 @@ class _HealthDocumentsState extends State<HealthDocuments> {
                 );
               },
             )
-          : Center(
-              child: Text(
-                'There is no document uploaded right now',
-                style: TextStyle(fontSize: screenWidth * 0.045),
-              ),
-            ),
+          : Center(child: Image.asset('assets/images/nodata.png')),
     );
   }
 
