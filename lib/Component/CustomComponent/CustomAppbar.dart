@@ -1,39 +1,36 @@
 import 'package:flutter/material.dart';
 
-class Customappbar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final Widget title;
+  final List<Widget> actions;
   final List<Color> gradientColors;
+  final bool automaticallyImplyLeading;
 
-  const Customappbar({
-    Key? key,
+  CustomAppBar({
     required this.title,
-    this.gradientColors = const [
-      Color.fromARGB(255, 22, 243, 177), // Default Start color
-      Color.fromARGB(255, 150, 94, 247), // Default End color
-    ],
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight),
-      child: AppBar(
-        title: Text(title),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: gradientColors,
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-        backgroundColor: Colors.transparent, // Make background transparent to show gradient
-        elevation: 0, // Optional: remove shadow for a cleaner look
-      ),
-    );
-  }
+    required this.actions,
+    required this.gradientColors,
+    this.automaticallyImplyLeading = false,
+  });
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: title,
+      actions: actions,
+      automaticallyImplyLeading: automaticallyImplyLeading,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+      ),
+    );
+  }
 }

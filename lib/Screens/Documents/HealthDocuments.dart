@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:health_app/Component/CustomComponent/CustomAppbar.dart';
 import 'package:health_app/Screens/Documents/DocumentViewer.dart';
-
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
@@ -31,8 +32,7 @@ class _HealthDocumentsState extends State<HealthDocuments> {
       if (Platform.isAndroid) {
         directory = await getExternalStorageDirectory();
       } else {
-        directory =
-            await getApplicationDocumentsDirectory(); // For iOS, use this directory
+        directory = await getApplicationDocumentsDirectory();
       }
 
       if (directory != null) {
@@ -43,7 +43,6 @@ class _HealthDocumentsState extends State<HealthDocuments> {
           final savePath = '${directory.path}/$fileName';
 
           try {
-            // Use Dio for downloading the file
             Dio dio = Dio();
             await dio.download(
               fileUrl,
@@ -70,14 +69,61 @@ class _HealthDocumentsState extends State<HealthDocuments> {
     }
   }
 
+  Future<void> _copyLocalFile(String filePath, String fileName) async {
+    try {
+      Directory? directory = await getExternalStorageDirectory();
+      String newPath = "";
+
+      //  path for Android
+      List<String> folders = directory!.path.split("/");
+      for (var i = 1; i < folders.length; i++) {
+        String folder = folders[i];
+        if (folder != "Android") {
+          newPath += "/" + folder;
+        } else {
+          break;
+        }
+      }
+      newPath = newPath + "/Documents";
+      directory = Directory(newPath);
+
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      String newFilePath = "${directory.path}/$fileName";
+
+      // Copy the file
+      File localFile = File(filePath);
+      await localFile.copy(newFilePath);
+      Fluttertoast.showToast(
+        msg: "File saved to: $newFilePath",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } catch (e) {
+      print("Error copying file: $e");
+      _showErrorDialog(context, "Error copying document: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppBar(
+        actions: [],
         title: Text('Health Documents'),
+        gradientColors: [
+          Color.fromARGB(255, 100, 235, 194),
+          Color.fromARGB(255, 150, 94, 247),
+        ],
+        automaticallyImplyLeading: true,
       ),
       body: widget.uploadedDocuments.isNotEmpty
           ? GridView.builder(
@@ -89,6 +135,9 @@ class _HealthDocumentsState extends State<HealthDocuments> {
               itemCount: widget.uploadedDocuments.length,
               itemBuilder: (context, index) {
                 final document = widget.uploadedDocuments[index];
+                final documentType = document['type'] as String? ?? '';
+                final documentPath = document['path'] as String?;
+
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -104,18 +153,24 @@ class _HealthDocumentsState extends State<HealthDocuments> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Expanded(
-                          child: document['type'] == 'pdf'
+                          child: documentType == 'pdf'
                               ? Icon(
                                   Icons.picture_as_pdf,
                                   color: Colors.deepPurple,
                                   size: screenWidth * 0.2,
                                 )
-                              : Image.file(
-                                  File(document['url']),
-                                  fit: BoxFit.cover,
-                                  width: screenWidth * 0.2,
-                                  height: screenHeight * 0.2,
-                                ),
+                              : documentType == 'png' || documentType == 'jpg'
+                                  ? Image.file(
+                                      File(documentPath!),
+                                      fit: BoxFit.cover,
+                                      width: screenWidth * 0.2,
+                                      height: screenHeight * 0.2,
+                                    )
+                                  : Icon(
+                                      Icons.camera,
+                                      color: Colors.deepPurple,
+                                      size: screenWidth * 0.2,
+                                    ),
                         ),
                         Padding(
                           padding: EdgeInsets.all(screenWidth * 0.02),
@@ -135,7 +190,19 @@ class _HealthDocumentsState extends State<HealthDocuments> {
                               icon: Icon(Icons.download),
                               color: Colors.green,
                               onPressed: () {
-                                _downloadDocument(context, document);
+                                final documentPath =
+                                    widget.uploadedDocuments[index]['path'];
+                                final fileName =
+                                    widget.uploadedDocuments[index]['name'];
+
+                                // Check if the path is a local file path
+                                if (documentPath != null &&
+                                    documentPath.startsWith('/data/')) {
+                                  _copyLocalFile(documentPath, fileName);
+                                } else {
+                                  _downloadDocument(documentPath,
+                                      fileName); // For remote URLs
+                                }
                               },
                             ),
                             IconButton(

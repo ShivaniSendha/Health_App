@@ -1,14 +1,19 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:health_app/Component/Carousel.dart';
+import 'package:health_app/Component/CustomComponent/CustomAppbar.dart';
+import 'package:health_app/Component/HealthDocumentButton.dart';
+import 'package:health_app/Component/Navigation/BottomTabBar.dart';
+import 'package:health_app/Component/ProfileAvatar.dart';
+import 'package:health_app/Component/UploadDocumentButton.dart';
 import 'package:health_app/Screens/Documents/HealthDocuments.dart';
+import 'package:health_app/Screens/Userprofile.dart';
+import 'package:health_app/utills/routes.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'Userprofile.dart'; // Import the Userprofile page
 
 class Home extends StatefulWidget {
   @override
@@ -24,7 +29,7 @@ class _HomeState extends State<Home> {
   ];
 
   List<Map<String, dynamic>> _documents = [];
-  String? _profilePhotoUrl; // To store the profile photo URL
+  String? _profilePhotoUrl;
 
   Future<void> _pickDocument() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -40,7 +45,29 @@ class _HomeState extends State<Home> {
           'type': result.files.single.extension!,
           'date': DateTime.now().toString(),
         });
+
+        // Show toast message after document is added
+        Fluttertoast.showToast(
+          msg: "Document uploaded successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       });
+    } else {
+      // Handle the case where no document was selected or show an error toast
+      Fluttertoast.showToast(
+        msg: "No document selected",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 
@@ -52,11 +79,30 @@ class _HomeState extends State<Home> {
         _documents.add({
           'name': pickedFile.name,
           'path': pickedFile.path,
-          'type': 'jpg',
+          'date': DateTime.now().toString(),
+        });
+        _documents.add({
+          'name': pickedFile.name,
+          'path': pickedFile.path,
+          'type': 'png',
           'date': DateTime.now().toString(),
         });
       });
     }
+  }
+
+  Future<void> _getProfilePhoto() async {
+    final sharedPref = await SharedPreferences.getInstance();
+    setState(() {
+      _profilePhotoUrl = sharedPref.getString('profilePhotoUrl');
+    });
+  }
+
+  Future<void> _logout() async {
+    var sharedPref = await SharedPreferences.getInstance();
+    await sharedPref.clear();
+    // Navigate to login screen or initial screen
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   void _showBottomModal(BuildContext context) {
@@ -79,7 +125,10 @@ class _HomeState extends State<Home> {
             children: <Widget>[
               ListTile(
                 leading: Icon(Icons.camera),
-                title: Text('Camera'),
+                title: Text(
+                  'Camera',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 onTap: () {
                   _pickImageFromCamera();
                   Navigator.pop(context);
@@ -87,7 +136,10 @@ class _HomeState extends State<Home> {
               ),
               ListTile(
                 leading: Icon(Icons.file_present),
-                title: Text('File'),
+                title: Text(
+                  'File',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 onTap: () {
                   _pickDocument();
                   Navigator.pop(context);
@@ -100,56 +152,58 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _showUploadedDocuments(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 300,
-          child: _documents.isNotEmpty
-              ? ListView.builder(
-                  itemCount: _documents.length,
-                  itemBuilder: (context, index) {
-                    final doc = _documents[index];
-                    return ListTile(
-                      leading: Icon(
-                        (doc['type'] ?? '') == 'pdf'
-                            ? Icons.insert_drive_file
-                            : (doc['type'] == 'png' || doc['type'] == 'jpg')
-                                ? Icons.image
-                                : Icons.help_outline,
-                      ),
-                      title: Text('Document: ${doc['name']}'),
-                      subtitle: Text('Uploaded on: ${doc['date']}'),
-                    );
-                  },
-                )
-              : Center(
-                  child: Text('There is no document uploaded right now'),
+  void _showProfileMenu(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.zero, // Remove default padding
+            content: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 100, 235, 194), // Start color
+                    Color.fromARGB(255, 150, 94, 247), // End color
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-        );
-      },
-    );
-  }
-
-  Future<void> _logout() async {
-    var sharedPref = await SharedPreferences.getInstance();
-    await sharedPref.clear();
-    // Navigate to login screen or initial screen
-    Navigator.pushReplacementNamed(context, '/login');
-  }
-
-  Future<void> _getProfilePhoto() async {
-    final sharedPref = await SharedPreferences.getInstance();
-    setState(() {
-      _profilePhotoUrl = sharedPref.getString('profilePhotoUrl');
-    });
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.person),
+                    title: Text('Profile'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              Userprofile(), // Navigate to the UserProfile page
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.logout),
+                    title: Text('Logout'),
+                    onTap: () {
+                      _logout();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   @override
   void initState() {
     super.initState();
-    _getProfilePhoto(); // Fetch the profile photo URL when the widget is initialized
+    _getProfilePhoto();
   }
 
   @override
@@ -158,228 +212,57 @@ class _HomeState extends State<Home> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          title: Text("Care"),
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color.fromARGB(255, 100, 235, 194), // Start color
-                  Color.fromARGB(255, 150, 94, 247), // End color
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+      appBar: CustomAppBar(
+        title: Text('Care'),
+        gradientColors: [
+          Color.fromARGB(255, 100, 235, 194), // Custom Start color
+          Color.fromARGB(255, 150, 94, 247), // Custom End color
+        ],
+        automaticallyImplyLeading: false,
+        actions: [
+          Profileavatar(
+            profilePhotoUrl: _profilePhotoUrl,
+            onPressed: () => _showProfileMenu(context),
           ),
-          backgroundColor: Colors
-              .transparent, // Make background transparent to show gradient
-          elevation: 0, // Optional: remove shadow for cleaner look
-
-          actions: [
-            CircleAvatar(
-              backgroundImage: _profilePhotoUrl != null
-                  ? FileImage(File(_profilePhotoUrl!))
-                  : AssetImage('assets/images/default_profile.png')
-                      as ImageProvider,
-              radius: 20,
-              backgroundColor: Colors.white,
-              child: IconButton(
-                icon: Icon(Icons.more_vert),
-                onPressed: () {
-                  _showProfileMenu(context);
-                },
-              ),
-            ),
-            SizedBox(width: 30),
-          ],
-        ),
+          SizedBox(width: 30),
+        ],
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          // Image Slider
-          CarouselSlider(
-            options: CarouselOptions(
-              height: screenHeight * 0.35,
-              autoPlay: true,
-              autoPlayInterval: Duration(seconds: 3),
-              viewportFraction: 1.0,
-              enlargeCenterPage: true,
-            ),
-            items: imgList
-                .map((item) => Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: item,
-                      ),
-                    ))
-                .toList(),
+          Carousel(
+            imgList: imgList,
+            screenHeight: screenHeight,
+            screenWidth: screenWidth,
           ),
           SizedBox(height: screenHeight * 0.03),
           Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              GestureDetector(
-                onTap: () {
-                  _showBottomModal(context);
-                },
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
-                  padding: EdgeInsets.symmetric(
-                      vertical: screenHeight * 0.015,
-                      horizontal: screenWidth * 0.05),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.upload_file,
-                        color: const Color.fromARGB(255, 63, 143, 63),
-                        size: screenWidth * 0.10,
-                      ),
-                      SizedBox(width: screenWidth * 0.03),
-                      Text(
-                        'Upload Document',
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.045,
-                          color: const Color.fromARGB(255, 63, 143, 63),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              UploadDocumentButton(
+                onTap: () => _showBottomModal(context),
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
               ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          HealthDocuments(uploadedDocuments: _documents),
+              HealthDocumentsButton(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HealthDocuments(
+                      uploadedDocuments: _documents,
                     ),
-                  );
-                },
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
-                  padding: EdgeInsets.symmetric(
-                      vertical: screenHeight * 0.015,
-                      horizontal: screenWidth * 0.05),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.health_and_safety,
-                        color: const Color.fromARGB(255, 63, 143, 63),
-                        size: screenWidth * 0.10,
-                      ),
-                      SizedBox(width: screenWidth * 0.03),
-                      Text(
-                        'Health Document',
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.045,
-                          color: const Color.fromARGB(255, 63, 143, 63),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
               ),
             ],
           ),
         ],
       ),
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors
-            .transparent, // Make the background transparent to show gradient
-        color: Color.fromARGB(255, 101, 218, 179), // Color of the active item
-        buttonBackgroundColor: Colors.green, // Color of the button
-        items: [
-          Icon(Icons.home, color: Colors.white),
-          Icon(Icons.settings_accessibility, color: Colors.white),
-        ],
+      bottomNavigationBar: BottomNavigationBarWidget(
         onTap: (index) {
-          // Handle the navigation here
+          // Handle navigation
         },
       ),
-    );
-  }
-
-  void _showProfileMenu(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.zero, // Remove default padding
-          content: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              gradient: LinearGradient(
-                colors: [
-                  Color.fromARGB(255, 100, 235, 194), // Start color
-                  Color.fromARGB(255, 150, 94, 247), // End color
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.person),
-                  title: Text('Profile'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            Userprofile(), // Navigate to the UserProfile page
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.logout),
-                  title: Text('Logout'),
-                  onTap: () {
-                    _logout();
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }

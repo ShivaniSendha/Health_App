@@ -12,5 +12,6 @@ class MyRoute {
   static String UploaaddocumentsRoutes = '/uploaddocuments';
   static String BiometricRoutes = '/biometricRoutes';
   static String HealthdocumentsRoutes = '/healthdocuments';
+  static String ListviewRoutes = '/listviewRoutes';
 
 }

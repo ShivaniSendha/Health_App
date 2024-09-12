@@ -1,4 +1,4 @@
-class CustomValidators {
+class CustomValidator {
   static String? validateName(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter your name';
@@ -34,8 +34,7 @@ class CustomValidators {
   static String? validatePhoneNumber(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter your mobile number';
-    } else if (value == '9348') {
-      return '';
     }
+    return null;
   }
 }

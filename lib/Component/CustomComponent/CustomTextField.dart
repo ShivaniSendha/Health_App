@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatefulWidget {
@@ -47,7 +49,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
         final validationMessage = widget.validator?.call(value);
         if (validationMessage != null) {
           setState(() {
-            // Show the error message if validation fails
             _errorText = validationMessage;
           });
         }

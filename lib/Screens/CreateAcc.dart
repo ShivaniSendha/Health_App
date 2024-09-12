@@ -23,12 +23,14 @@ class _CreateAccState extends State<CreateAcc> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: Customappbar(
-        title: 'Mobile Number',
+      appBar: CustomAppBar(
+        actions: [],
+        title: Text('Mobile Number'),
         gradientColors: [
           Color.fromARGB(255, 100, 235, 194), // Custom Start color
           Color.fromARGB(255, 150, 94, 247), // Custom End color
         ],
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -52,7 +54,7 @@ class _CreateAccState extends State<CreateAcc> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                     Color.fromARGB(255, 100, 235, 194),// Start color
+                    Color.fromARGB(255, 100, 235, 194), // Start color
                     Color.fromARGB(255, 150, 94, 247), // End color
                   ],
                   begin: Alignment.topLeft,
@@ -73,37 +75,44 @@ class _CreateAccState extends State<CreateAcc> {
                   ),
                 ],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Please Enter Your Phone Number",
-                      labelText: "Phone",
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.deepPurple, width: 2),
+              child: Form(
+                key: _formKey, // Wrap with Form and assign the _formKey
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Please Enter Your Phone Number",
+                        labelText: "Phone",
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.deepPurple, width: 2),
+                        ),
+                      ),
+                      validator:
+                          CustomValidator.validatePhoneNumber, // Validation
+                    ),
+                    SizedBox(height: screenHeight * 0.03), // Responsive spacing
+                    Center(
+                      child: CustomButton(
+                        text: "Send OTP",
+                        icon: (Icons.send_to_mobile),
+                        onPressed: () {
+                        
+                          if (_formKey.currentState!.validate()) {
+                            // If validation passes, proceed
+                            Navigator.pushNamed(context, MyRoute.OTPRoute);
+                          } 
+                          
+                        },
                       ),
                     ),
-                    validator: CustomValidators.validatePhoneNumber,
-                  ),
-                  SizedBox(height: screenHeight * 0.03), // Responsive spacing
-                  Center(
-                    child: CustomButton(
-                      text: "Send OTP",
-                      icon: (Icons.arrow_circle_right),
-                      onPressed: () {
-                        validator:
-                        CustomValidators.validatePhoneNumber;
-                        Navigator.pushNamed(context, MyRoute.OTPRoute);
-                      },
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.05), // Responsive spacing
-                ],
+                    SizedBox(height: screenHeight * 0.05), // Responsive spacing
+                  ],
+                ),
               ),
             ),
           ],

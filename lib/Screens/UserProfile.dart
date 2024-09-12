@@ -46,12 +46,14 @@ class _UserprofileState extends State<Userprofile> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: Customappbar(
-        title: 'User Profile',
+      appBar: CustomAppBar(
+        actions: [],
+        title: Text("User Profile"),
         gradientColors: [
           Color.fromARGB(255, 22, 243, 177), // Custom Start color
           Color.fromARGB(255, 150, 94, 247), // Custom End color
         ],
+          automaticallyImplyLeading: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

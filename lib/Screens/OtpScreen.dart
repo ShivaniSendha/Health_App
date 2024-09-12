@@ -28,12 +28,14 @@ class OtpScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: Customappbar(
-        title: 'OTP',
+      appBar: CustomAppBar(
+         actions: [],
+        title: Text('OTP'),
         gradientColors: [
           Color.fromARGB(255, 100, 235, 194), // Custom Start color
           Color.fromARGB(255, 150, 94, 247), // Custom End color
         ],
+          automaticallyImplyLeading: true,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -115,6 +117,7 @@ class OtpScreen extends StatelessWidget {
                     ),
                     CustomButton(
                       text: "Verify OTP",
+                      icon: Icons.verified_user_outlined,
                       onPressed: () {
                         Navigator.pushNamed(context, MyRoute.RegistrationRoute);
                       },

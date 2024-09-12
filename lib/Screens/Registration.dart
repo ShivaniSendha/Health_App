@@ -42,14 +42,12 @@ class _RegistrationState extends State<Registration> {
       await sharedPref.setString('name', _nameController.text);
       await sharedPref.setString('email', _emailController.text);
       await sharedPref.setString('address', _addressController.text);
-
       // Save the profile image path
       if (_profileImage != null) {
         await sharedPref.setString('profilePhotoUrl', _profileImage!.path);
       }
-
       await sharedPref.setBool(Registration.KEYLOGIN, true);
-      Navigator.pushNamed(context, MyRoute.HomeRoutes);
+      Navigator.pushNamed(context, MyRoute.LoginRoute);
     }
   }
 
@@ -59,12 +57,14 @@ class _RegistrationState extends State<Registration> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: Customappbar(
-        title: 'Create Account',
+      appBar: CustomAppBar(
+        actions: [],
+        title: Text('Create Account'),
         gradientColors: [
-           Color.fromARGB(255, 100, 235, 194), // Custom Start color
+          Color.fromARGB(255, 100, 235, 194), // Custom Start color
           Color.fromARGB(255, 150, 94, 247), // Custom End color
         ],
+        automaticallyImplyLeading: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -79,6 +79,7 @@ class _RegistrationState extends State<Registration> {
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.grey[300],
+
                     backgroundImage: _profileImage != null
                         ? FileImage(_profileImage!)
                         : null, // No image provider
@@ -91,7 +92,10 @@ class _RegistrationState extends State<Registration> {
                   SizedBox(height: 20),
                   TextButton(
                     onPressed: _pickImage,
-                    child: Text('Upload Profile Picture'),
+                    child: Text(
+                      'Upload Profile Picture',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
@@ -102,7 +106,7 @@ class _RegistrationState extends State<Registration> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                       Color.fromARGB(255, 100, 235, 194), // Start color
+                      Color.fromARGB(255, 100, 235, 194), // Start color
                       Color.fromARGB(255, 150, 94, 247), // End color
                     ],
                     begin: Alignment.topLeft,
@@ -142,7 +146,7 @@ class _RegistrationState extends State<Registration> {
                                   color: Colors.deepPurple, width: 2),
                             ),
                           ),
-                          validator: CustomValidators.validateName,
+                          validator: CustomValidator.validateName,
                         ),
                         SizedBox(height: 20),
 
@@ -158,7 +162,7 @@ class _RegistrationState extends State<Registration> {
                                   color: Colors.deepPurple, width: 2),
                             ),
                           ),
-                          validator: CustomValidators.validateEmail,
+                          validator: CustomValidator.validateEmail,
                         ),
                         SizedBox(height: 20),
 
@@ -175,7 +179,7 @@ class _RegistrationState extends State<Registration> {
                                   color: Colors.deepPurple, width: 2),
                             ),
                           ),
-                          validator: CustomValidators.validatePassword,
+                          validator: CustomValidator.validatePassword,
                         ),
                         SizedBox(height: 20),
 
@@ -191,7 +195,7 @@ class _RegistrationState extends State<Registration> {
                                   color: Colors.deepPurple, width: 2),
                             ),
                           ),
-                          validator: CustomValidators.validateAddress,
+                          validator: CustomValidator.validateAddress,
                         ),
                         SizedBox(height: 20),
 
