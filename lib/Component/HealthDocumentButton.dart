@@ -14,11 +14,9 @@ class HealthDocumentsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
      return TextButton(
-      
       onPressed: () {
         onTap();
       },
-      
       child: Container(
         margin: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
         padding: EdgeInsets.symmetric(

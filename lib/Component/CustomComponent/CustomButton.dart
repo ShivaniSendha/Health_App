@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-class CustomButton extends StatelessWidget {
+class CustomButton extends StatefulWidget {
   final String text;
   final Color backgroundColor;
   final Color textColor;
@@ -25,6 +25,11 @@ class CustomButton extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<CustomButton> createState() => _CustomButtonState();
+}
+
+class _CustomButtonState extends State<CustomButton> {
+  @override
   Widget build(BuildContext context) {
     // Get screen width and height
     final screenWidth = MediaQuery.of(context).size.width;
@@ -33,7 +38,7 @@ class CustomButton extends StatelessWidget {
     final responsiveFontSize = screenWidth * 0.045;
 
     return GestureDetector(
-      onTap: onPressed, 
+      onTap: widget.onPressed, 
       child: Container(
         width: double.infinity,
         height: 45, 
@@ -64,13 +69,13 @@ class CustomButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center, // Center the content
           children: [
-            if (icon != null) ...[
-              Icon(icon, color: textColor, size: responsiveFontSize),
+            if (widget.icon != null) ...[
+              Icon(widget.icon, color: widget.textColor, size: responsiveFontSize),
               SizedBox(width: screenWidth * 0.02),
             ],
             Text(
-              text,
-              style: TextStyle(fontSize: responsiveFontSize, color: textColor),
+              widget.text,
+              style: TextStyle(fontSize: responsiveFontSize, color: widget.textColor),
             ),
           ],
         ),

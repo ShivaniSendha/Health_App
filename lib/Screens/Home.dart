@@ -10,7 +10,7 @@ import 'package:health_app/Component/Navigation/BottomTabBar.dart';
 import 'package:health_app/Component/ProfileAvatar.dart';
 import 'package:health_app/Component/UploadDocumentButton.dart';
 import 'package:health_app/Screens/Documents/HealthDocuments.dart';
-import 'package:health_app/Screens/Userprofile.dart';
+
 import 'package:health_app/utills/routes.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -116,8 +116,6 @@ class _HomeState extends State<Home> {
                 Color.fromARGB(255, 100, 235, 194), // Start color
                 Color.fromARGB(255, 150, 94, 247), // End color
               ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
             ),
           ),
           child: Column(
@@ -166,8 +164,6 @@ class _HomeState extends State<Home> {
                     Color.fromARGB(255, 100, 235, 194), // Start color
                     Color.fromARGB(255, 150, 94, 247), // End color
                   ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
                 ),
               ),
               child: Column(
@@ -177,13 +173,8 @@ class _HomeState extends State<Home> {
                     leading: Icon(Icons.person),
                     title: Text('Profile'),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              Userprofile(), // Navigate to the UserProfile page
-                        ),
-                      );
+                      Navigator.pushNamed(
+                          context, MyRoute.ShowUserprofileRoutes);
                     },
                   ),
                   ListTile(
@@ -260,7 +251,7 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: BottomNavigationBarWidget(
         onTap: (index) {
-          // Handle navigation
+          // BottomTabBar navigation
         },
       ),
     );

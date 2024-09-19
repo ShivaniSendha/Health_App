@@ -39,12 +39,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         errorText: _errorText,
       ),
-      onChanged: (value) {
-        setState(() {
-          // Clear the error message when the user types something
-          _errorText = null;
-        });
-      },
+      // onChanged: (value) {
+      //   setState(() {
+      //     // Clear the error message when the user types something
+      //     _errorText = null;
+      //   });
+      // },
       validator: (value) {
         final validationMessage = widget.validator?.call(value);
         if (validationMessage != null) {

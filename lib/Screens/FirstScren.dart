@@ -9,47 +9,53 @@ class Firstscren extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Material(
-      child: Center(
+    return Scaffold(
+      body: Center(
         // Ensure the whole content is centered
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center, // Centers the content vertically
-            crossAxisAlignment:
-                CrossAxisAlignment.center, // Center horizontally
-            children: [
-              SizedBox(height: screenHeight * 0.05), // Responsive spacing
-              Image.asset(
-                'assets/images/docters.png',
-                height: screenHeight * 0.3, // Responsive image height
-              ),
-              SizedBox(
-                  height: screenHeight *
-                      0.05), // Adds responsive space between the image and buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  CustomButton(
-                    text: "Login",
-                    icon: Icons.arrow_circle_right,
-                    onPressed: () {
-                      Navigator.pushNamed(context, MyRoute.LoginRoute);
-                    },
-                  ),
-                  CustomButton(
-                    text: "Create Profile",
-                    icon: Icons.arrow_circle_right,
-                    onPressed: () {
-                      Navigator.pushNamed(context, MyRoute.RegistrationRoute);
-                    },
-                  )
-                ],
-              ),
-              SizedBox(
-                  height: screenHeight *
-                      0.05), // Adds responsive space below buttons
-            ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 16.0), // Add padding for responsiveness
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center, // Centers vertically
+              crossAxisAlignment:
+                  CrossAxisAlignment.center, // Centers horizontally
+              children: [
+                SizedBox(
+                    height: screenHeight * 0.05), // Responsive vertical spacing
+                Image.asset(
+                  'assets/images/logo.png',
+                  height: screenHeight * 0.3, // Responsive image height
+                  width: screenWidth * 0.8, // Responsive image width
+                  fit: BoxFit.contain, // Ensures the image scales well
+                ),
+                SizedBox(
+                    height: screenHeight *
+                        0.05), // Responsive space between the image and buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        child: CustomButton(
+                          text: "Create Profile",
+                          icon: Icons.arrow_right_alt,
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context, MyRoute.CreateProfileRoutes);
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(
+                    height:
+                        screenHeight * 0.05), // Responsive space below buttons
+              ],
+            ),
           ),
         ),
       ),

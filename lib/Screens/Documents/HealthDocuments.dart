@@ -23,52 +23,6 @@ class _HealthDocumentsState extends State<HealthDocuments> {
     });
   }
 
-  Future<void> _downloadDocument(
-      BuildContext context, Map<String, dynamic> document) async {
-    var status = await Permission.storage.request();
-
-    if (status.isGranted) {
-      Directory? directory;
-      if (Platform.isAndroid) {
-        directory = await getExternalStorageDirectory();
-      } else {
-        directory = await getApplicationDocumentsDirectory();
-      }
-
-      if (directory != null) {
-        final fileName = document['name'] as String?;
-        final fileUrl = document['url'] as String?;
-
-        if (fileName != null && fileUrl != null) {
-          final savePath = '${directory.path}/$fileName';
-
-          try {
-            Dio dio = Dio();
-            await dio.download(
-              fileUrl,
-              savePath,
-              onReceiveProgress: (received, total) {
-                if (total != -1) {
-                  print((received / total * 100).toStringAsFixed(0) + "%");
-                }
-              },
-            );
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Downloaded to $savePath')),
-            );
-          } catch (e) {
-            _showErrorDialog(context, 'Error downloading file: $e');
-          }
-        } else {
-          _showErrorDialog(context, 'File name or URL is null');
-        }
-      }
-    } else {
-      _showErrorDialog(context, 'Permission denied to access storage.');
-    }
-  }
-
   Future<void> _copyLocalFile(String filePath, String fileName) async {
     try {
       Directory? directory = await getExternalStorageDirectory();
@@ -199,9 +153,6 @@ class _HealthDocumentsState extends State<HealthDocuments> {
                                 if (documentPath != null &&
                                     documentPath.startsWith('/data/')) {
                                   _copyLocalFile(documentPath, fileName);
-                                } else {
-                                  _downloadDocument(documentPath,
-                                      fileName); // For remote URLs
                                 }
                               },
                             ),
